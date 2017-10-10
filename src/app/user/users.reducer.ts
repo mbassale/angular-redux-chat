@@ -22,3 +22,5 @@ export const UsersReducer =
         return state;
     }
   };
+
+export const getCurrentUser = (state) => state.users.currentUser;
