@@ -46,6 +46,12 @@ const wait: User = {
   avatarSrc: 'assets/images/avatars/male-avatar-2.png'
 };
 
+const wordCount: User = {
+  id: UUID.UUID(),
+  name: 'Counting Bot',
+  avatarSrc: 'assets/images/avatars/male-avatar-3.png'
+};
+
 const tLadycap: Thread = {
   id: 'tLadycap',
   name: ladycap.name,
@@ -71,6 +77,13 @@ const tWait: Thread = {
   id: 'tWait',
   name: wait.name,
   avatarSrc: wait.avatarSrc,
+  messages: []
+};
+
+const tWordCount: Thread = {
+  id: 'tWordCount',
+  name: wordCount.name,
+  avatarSrc: wordCount.avatarSrc,
   messages: []
 };
 
@@ -113,6 +126,13 @@ export function ChatExampleData(store: Redux.Store<AppState>) {
     sentAt: new Date(),
     text: `I\'ll wait however many seconds you send to me before responding.` +
       ` Try sending '3'`
+  }));
+
+  store.dispatch(ThreadActions.addThread(tWordCount));
+  store.dispatch(ThreadActions.addMessage(tWordCount, {
+    author: wordCount,
+    sentAt: new Date(),
+    text: `I\'ll count words for whatever you send me`
   }));
 
   // select the first thread
@@ -177,6 +197,13 @@ export function ChatExampleData(store: Redux.Store<AppState>) {
               },
               waitTime * 1000);
 
+            break;
+          case tWordCount.id:
+            const textWordCount = message.text.split(' ').length;
+            store.dispatch(ThreadActions.addMessage(tWordCount, {
+              author: wordCount,
+              text: textWordCount
+            }));
             break;
           default:
             break;
