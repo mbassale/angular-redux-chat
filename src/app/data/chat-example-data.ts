@@ -8,6 +8,7 @@ import { User } from '../user/user.model';
 import * as UserActions from '../user/user.actions';
 import {UUID} from 'angular2-uuid';
 import {getAllMessages} from '../thread/threads.reducer';
+import {Md5} from "ts-md5/dist/md5";
 
 /**
  * ChatExampleData sets up the initial data for our chats as well as
@@ -52,6 +53,12 @@ const wordCount: User = {
   avatarSrc: 'assets/images/avatars/male-avatar-3.png'
 };
 
+const md5Bot: User = {
+  id: UUID.UUID(),
+  name: 'MD5 Bot',
+  avatarSrc: 'assets/images/avatars/male-avatar-4.png'
+};
+
 const tLadycap: Thread = {
   id: 'tLadycap',
   name: ladycap.name,
@@ -84,6 +91,13 @@ const tWordCount: Thread = {
   id: 'tWordCount',
   name: wordCount.name,
   avatarSrc: wordCount.avatarSrc,
+  messages: []
+};
+
+const md5Thread: Thread = {
+  id: 'md5Thread',
+  name: md5Bot.name,
+  avatarSrc: md5Bot.avatarSrc,
   messages: []
 };
 
@@ -133,6 +147,13 @@ export function ChatExampleData(store: Redux.Store<AppState>) {
     author: wordCount,
     sentAt: new Date(),
     text: `I\'ll count words for whatever you send me`
+  }));
+
+  store.dispatch(ThreadActions.addThread(md5Thread));
+  store.dispatch(ThreadActions.addMessage(md5Thread, {
+    author: md5Bot,
+    sentAt: new Date(),
+    text: `I\'ll calculate MD5 hash for whatever you send me`
   }));
 
   // select the first thread
@@ -203,6 +224,13 @@ export function ChatExampleData(store: Redux.Store<AppState>) {
             store.dispatch(ThreadActions.addMessage(tWordCount, {
               author: wordCount,
               text: textWordCount
+            }));
+            break;
+          case md5Thread.id:
+            const hashedText = Md5.hashStr(message.text);
+            store.dispatch(ThreadActions.addMessage(md5Thread, {
+              author: md5Bot,
+              text: hashedText
             }));
             break;
           default:
